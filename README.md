@@ -12,14 +12,30 @@ VS Code Dev Containers 上で動作する開発環境を提供します。
 - **Node.js 24**: `ghcr.io/devcontainers/features/node:1` による導入
 - **Claude Code**: `ghcr.io/anthropics/devcontainer-features/claude-code:1.0` による Anthropic 公式 CLI の統合
 - **ポートフォワーディング**: ポート 3000 を自動転送
+- **タイムゾーン**: `containerEnv` で `TZ=Asia/Tokyo` を設定し、コンテナ内の時刻表示を統一
 
 ### カスタム Feature: claude-code-bell
 
-Claude Code のタスク完了時にターミナルベルで通知するカスタム Dev Container Feature です。
+Claude Code が入力を待っている時にターミナルベルで通知するカスタム Dev Container Feature です。
 
-- Claude Code の Stop フックでターミナルベル (`\a`) を送出
+- Claude Code の `Stop` / `Notification` フックでターミナルベル (`\a`) を送出
+- 許可プロンプトやサブエージェントの入力待ちでも通知
+- バックグラウンドのサブエージェント実行中は抑制し、全て完了してから 1 回だけ鳴らす
+  （`/simplify` のような並列実行で 5 回鳴るのを防ぐ）
+- 60 秒アイドル通知は対象外
 - VS Code のビジュアルベルとサウンドを自動で有効化
 - ベル持続時間を 60 秒に設定し、通知を見逃しにくくする
+- 既存の `~/.claude/settings.json` は上書きせず、`hooks` のみをマージ
+
+### カスタム Feature: claude-code-statusline
+
+Claude Code のステータスラインに実行状況を表示するカスタム Dev Container Feature です。
+
+- モデル名、git ブランチ、コンテキスト使用量、レートリミット使用量を 1 行で表示
+- コンテキスト使用量は 10 段階のゲージ + パーセンテージ（`●●●●○○○○○○ 40%`）
+- レートリミットは 5 時間枠と週次枠を、それぞれのリセット時刻付きで表示（`5h:23% (→02:20) 7d:61% (→07/31 02:20)`）
+- レートリミットは Claude.ai サブスクリプション利用時のみ取得できるため、値が無い場合は該当区画ごと非表示
+- 既存の `~/.claude/settings.json` は上書きせず、`statusLine` のみをマージ
 
 ### カスタム Feature: node-modules-volume
 
@@ -45,6 +61,12 @@ Claude Code のタスク完了時にターミナルベルで通知するカス�
     ├── claude-code-bell/
     │   ├── devcontainer-feature.json          # Feature 定義
     │   ├── claude-settings.json               # Claude Code のフック設定
+    │   ├── bell.sh                            # ターミナルベル送出スクリプト
+    │   └── install.sh                         # Feature インストールスクリプト
+    ├── claude-code-statusline/
+    │   ├── devcontainer-feature.json          # Feature 定義
+    │   ├── claude-settings.json               # Claude Code の statusLine 設定
+    │   ├── statusline.sh                      # ステータスライン生成スクリプト
     │   └── install.sh                         # Feature インストールスクリプト
     └── node-modules-volume/
         ├── devcontainer-feature.json          # Feature 定義

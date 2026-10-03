@@ -1,21 +1,21 @@
 #!/bin/sh
 # Runs as root at build time. The whole feature folder is copied into the
-# container, so bell.sh sits next to this script — the workspace is NOT mounted
-# yet, and nothing here may reference it.
+# container, so statusline.sh sits next to this script — the workspace is NOT
+# mounted yet, and nothing here may reference it.
 set -e
 cd "$(dirname "$0")"
 
-# jq parses the hook payload at runtime and merges the settings fragment below.
-# It ships in the devcontainer base images, so this normally does nothing.
-if ! command -v jq >/dev/null; then
+# jq parses the status line JSON; tzdata backs the TZ set in devcontainer.json.
+# Both ship in the devcontainer base images, so this normally does nothing.
+if ! command -v jq >/dev/null || [ ! -d /usr/share/zoneinfo ]; then
   apt-get update
-  apt-get install -y --no-install-recommends jq
+  apt-get install -y --no-install-recommends jq tzdata
   rm -rf /var/lib/apt/lists/*
 fi
 
 dest="${_REMOTE_USER_HOME:-$HOME}/.claude"
 mkdir -p "$dest"
-install -m 755 bell.sh "$dest/bell.sh"
+install -m 755 statusline.sh "$dest/statusline.sh"
 
 # Merge, never overwrite: settings.json holds unrelated user preferences.
 [ -s "$dest/settings.json" ] || echo '{}' > "$dest/settings.json"
@@ -25,5 +25,5 @@ mv "$dest/settings.json.tmp" "$dest/settings.json"
 # Only what this feature touched: ~/.claude also holds session and project history,
 # which is thousands of inodes on a persisted home and needs no ownership change.
 if [ -n "$_REMOTE_USER" ]; then
-  chown "$_REMOTE_USER" "$dest" "$dest/bell.sh" "$dest/settings.json"
+  chown "$_REMOTE_USER" "$dest" "$dest/statusline.sh" "$dest/settings.json"
 fi
