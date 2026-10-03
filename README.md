@@ -10,6 +10,7 @@ VS Code Dev Containers 上で動作する開発環境を提供します。
 
 - **ベースイメージ**: `mcr.microsoft.com/devcontainers/base:trixie` (Debian Trixie)
 - **Node.js 24**: `ghcr.io/devcontainers/features/node:1` による導入
+- **GitHub CLI**: `ghcr.io/devcontainers/features/github-cli:1` による `gh` コマンドの導入
 - **Claude Code**: `ghcr.io/anthropics/devcontainer-features/claude-code:1.0` による Anthropic 公式 CLI の統合
 - **ポートフォワーディング**: ポート 3000 を自動転送
 - **タイムゾーン**: `containerEnv` で `TZ=Asia/Tokyo` を設定し、コンテナ内の時刻表示を統一
