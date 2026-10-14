@@ -13,17 +13,13 @@ if ! command -v jq >/dev/null || [ ! -d /usr/share/zoneinfo ]; then
   rm -rf /var/lib/apt/lists/*
 fi
 
-dest="${_REMOTE_USER_HOME:-$HOME}/.claude"
-mkdir -p "$dest"
-install -m 755 statusline.sh "$dest/statusline.sh"
-
-# Merge, never overwrite: settings.json holds unrelated user preferences.
-[ -s "$dest/settings.json" ] || echo '{}' > "$dest/settings.json"
-jq -s '.[0] * .[1]' "$dest/settings.json" claude-settings.json > "$dest/settings.json.tmp"
-mv "$dest/settings.json.tmp" "$dest/settings.json"
-
-# Only what this feature touched: ~/.claude also holds session and project history,
-# which is thousands of inodes on a persisted home and needs no ownership change.
-if [ -n "$_REMOTE_USER" ]; then
-  chown "$_REMOTE_USER" "$dest" "$dest/statusline.sh" "$dest/settings.json"
-fi
+# Nothing goes under ~/.claude: that dir is a persisted volume
+# (claude-config-volume), which hides whatever the image puts there, and its
+# settings.json belongs to the user. The script lives in /usr/local/share and
+# the settings go in as a managed-settings drop-in, which Claude Code layers on
+# top of the user's settings (hooks from both run) and which is rebuilt along
+# with the image.
+dest=/usr/local/share/claude-code-statusline
+mkdir -p "$dest" /etc/claude-code/managed-settings.d
+install -m 755 statusline.sh "$dest/"
+install -m 644 claude-settings.json /etc/claude-code/managed-settings.d/claude-code-statusline.json

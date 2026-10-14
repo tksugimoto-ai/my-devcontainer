@@ -6,7 +6,7 @@
                 "hooks": [
                     {
                         "type": "command",
-                        "command": "$HOME/.claude/bell.sh"
+                        "command": "/usr/local/share/claude-code-bell/bell.sh"
                     }
                 ]
             }
@@ -16,7 +16,7 @@
                 "hooks": [
                     {
                         "type": "command",
-                        "command": "$HOME/.claude/bell.sh"
+                        "command": "/usr/local/share/claude-code-bell/bell.sh"
                     }
                 ]
             }
@@ -27,7 +27,7 @@
                 "hooks": [
                     {
                         "type": "command",
-                        "command": "$HOME/.claude/bell.sh"
+                        "command": "/usr/local/share/claude-code-bell/bell.sh"
                     }
                 ]
             }
