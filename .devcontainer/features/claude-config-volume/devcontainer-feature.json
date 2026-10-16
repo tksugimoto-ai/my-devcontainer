@@ -1,0 +1,17 @@
+{
+    "id": "claude-config-volume",
+    "version": "1.0.0",
+    "name": "Claude Code Config Volume Mount",
+    "description": "Mounts the Claude Code config dir as a named volume so history, login and memory survive rebuilds",
+    "containerEnv": {
+        "CLAUDE_CONFIG_DIR": "/home/vscode/.claude"
+    },
+    "mounts": [
+        {
+            "source": "claude-config-${devcontainerId}",
+            "target": "/home/vscode/.claude",
+            "type": "volume"
+        }
+    ],
+    "onCreateCommand": "sudo chown $(id -un):$(id -gn) /home/vscode/.claude && chmod 700 /home/vscode/.claude"
+}

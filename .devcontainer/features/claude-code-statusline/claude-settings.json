@@ -1,6 +1,6 @@
 {
     "statusLine": {
         "type": "command",
-        "command": "$HOME/.claude/statusline.sh"
+        "command": "/usr/local/share/claude-code-statusline/statusline.sh"
     }
 }

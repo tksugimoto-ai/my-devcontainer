@@ -9,10 +9,13 @@
 		"ghcr.io/devcontainers/features/node:1": {
 			"version": "24"
 		},
+		"ghcr.io/devcontainers/features/github-cli:1": {},
 		"ghcr.io/anthropics/devcontainer-features/claude-code:1.0": {},
 		"./features/claude-code-bell": {},
 		"./features/claude-code-statusline": {},
-		"./features/node-modules-volume": {}
+		"./features/claude-config-volume": {},
+		"./features/node-modules-volume": {},
+		"./features/gh-auth-volume": {}
 	},
 
 	// One clock for the whole container: the status line's rate limit reset times
